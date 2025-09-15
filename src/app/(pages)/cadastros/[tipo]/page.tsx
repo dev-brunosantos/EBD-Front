@@ -7,14 +7,22 @@ import { FormUsuario } from "@/src/components/Forms/FormUsuario";
 import { Tela, TelaContainer } from "@/src/components/Tela";
 import { BtnIcon } from "@/src/components/Buttons/BtnIcon";
 import { useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
+
+type UsuarioTipo = "alunos" | "responsaveis";
 
 interface CadastroUsuarioProps {
   params: Promise<{ tipo: string }>;
 }
 
 export default function CadastroUsuario({ params }: CadastroUsuarioProps) {
-  const { tipo } = use(params); // 🔑 aqui "unwrap" do Promise
+  const { tipo } = use(params); // 👈 unwrap do Promise
   const route = useRouter();
+
+  // 🔎 validação do tipo
+  if (tipo !== "alunos" && tipo !== "responsaveis") {
+    notFound(); // chama a página padrão 404
+  }
 
   return (
     <Tela>
@@ -26,13 +34,11 @@ export default function CadastroUsuario({ params }: CadastroUsuarioProps) {
 
       <TelaContainer>
         <h1 className="text-[40px] text-center font-bold">
-          {tipo.toLowerCase() === "alunos"
-            ? "Cadastro de Alunos"
-            : "Cadastro de Responsáveis"}
+          {tipo === "alunos" ? "Cadastro de Alunos" : "Cadastro de Responsáveis"}
         </h1>
       </TelaContainer>
 
-      <FormUsuario tipoUsuario={tipo.toLowerCase()} />
+      <FormUsuario tipoUsuario={tipo} />
 
       <TelaContainer>
         <BtnComponent titulo="Cadastrar" />
